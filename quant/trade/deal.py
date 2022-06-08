@@ -1,3 +1,8 @@
+"""
+交易函数
+"""
+
+from quant.stock.get_fun import *
 
 # 按股数下单(作为基础函数)
 def _order(today_data, security, amount):
@@ -7,25 +12,27 @@ def _order(today_data, security, amount):
         print("今天停牌")
         return
 
-    if context.cash - amount * p < 0:
-        amount = int(context.cash / p)
+    if context.portfolio.available_cash - amount * p < 0:
+        amount = int(context.portfolio.available_cash / p)
         print("现金不足,已调整为%d" % (amount))
 
     if amount % 100 != 0:
-        if amount != -context.positions.get(security, 0):
+        if amount != -context.portfolio.positions.get(security, Position()).total_amount:
             amount = int(amount / 100) * 100
             print("不是100的倍数,已调整为%d" % amount)
 
-    if context.positions.get(security, 0) < -amount:
-        amount = -context.positions.get(security, 0)
+    if context.portfolio.positions.get(security, Position()).total_amount < -amount:
+        amount = -context.portfolio.positions.get(security, Position()).total_amount
         print("卖出股票不能超出持仓数量,已调整为%d" % amount)
 
-    context.positions[security] = context.positions.get(security, 0) + amount
+    postion = Position()
+    postion.total_amount = context.portfolio.positions.get(security, Position()).total_amount + amount
+    context.portfolio.positions[security] = postion
 
-    context.cash -= amount * p
+    context.portfolio.available_cash -= amount * p
 
-    if context.positions[security] == 0:
-        del context.positions[security]
+    if context.portfolio.positions[security].total_amount == 0:
+        del context.portfolio.positions[security]
 
 
 # 按股数下单
@@ -41,7 +48,7 @@ def order_target(security, amount):
         amount = 0
 
     today_data = get_today_data(security)
-    hold_amount = context.positions.get(security, 0)  # ToDo  T+1问题
+    hold_amount = context.portfolio.positions.get(security, 0).total_amount  # ToDo  T+1问题
     delta_amount = amount - hold_amount
     _order(today_data, security, delta_amount)
 
@@ -60,6 +67,6 @@ def order_target_value(security, value):
         print("价值不能为负,已调整为0")
         value = 0
 
-    hold_value = context.positions.get(security, 0) * today_data['open']
+    hold_value = context.portfolio.positions.get(security, 0).total_amount * today_data['open']
     delta_value = value - hold_value
     order_value(security, delta_value)
