@@ -1,0 +1,44 @@
+# 导入函数库
+from quant import *
+
+def initialize(context):
+    # 输出内容到日志 Log.log()
+    Log.log("初始化函数开始运行且全局只运行一次\n")
+    # 设定沪深300作为基准
+    set_benckmark('399300.SZ')
+    # 设置滑点
+    set_PerSlippage(0.03)
+
+    #全局变量定义
+    g.p1 = 2
+    g.p2 = 10
+    g.security = '000009.SZ'
+    g.flag = True
+    g.i = None
+    g.sub_money = context.portfolio.available_cash / 2
+
+# 每日运行函数
+def handle_data(context):
+    hist = attribute_history(g.p2, g.security)
+    ma5 = hist['close'][g.p1].mean()
+    ma60 = hist['close'].mean()
+
+    if g.flag and context.runtime >= 6 and context.runtime <= 18 and len(context.portfolio.positions) == 0:
+        g.i = context.portfolio.create_subP(g.sub_money)
+        context.portfolio.switch_to_subP(g.i)
+        g.flag = False
+
+    if context.runtime >= 6 and context.runtime <= 18 and g.flag == False:
+        if ma5 > ma60 and g.security not in context.portfolio.subPortfolio[g.i].positions:
+            order_value(g.security, context.portfolio.subPortfolio[g.i].available_cash)
+        elif ma5 < ma60 and g.security in context.portfolio.subPortfolio[g.i].positions:
+            order_target(g.security, 0)
+        if context.runtime == 18:
+            context.portfolio.subPortfolio[g.i].backflow_cash(context.portfolio.subPortfolio[g.i].available_cash)
+            context.portfolio.subPortfolio[g.i].switch_to_mainP()
+            context.portfolio.del_subP(g.i)
+
+    if ma5 > ma60 and g.security not in context.portfolio.positions:
+        order_value(g.security, context.portfolio.available_cash)
+    elif ma5 < ma60 and g.security in context.portfolio.positions:
+        order_target(g.security, 0)

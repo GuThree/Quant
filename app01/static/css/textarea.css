@@ -1,0 +1,31 @@
+/*全局*/
+* {
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*overflow: hidden;*/
+}
+
+/* 设置代码行背景为黑色 */
+.code-input {
+    background-color: black;
+    color: white; /* 设置字体颜色为白色 */
+    font-family: monospace;
+    padding: 0.5em 0.5em 0 0.5em; /* 设置内边距 */
+    min-height: 86vh; /* 设置高度 */
+    width: 100%;
+    line-height: 2.17vh;
+}
+
+/* 在左边显示行数 */
+.code-line-numbers {
+    padding-top: 1vh;
+    background-color: #333333; /* 设置背景色 */
+    color: white; /* 设置字体颜色 */
+    width: 2vw; /* 设置宽度 */
+    min-height: 86vh; /* 设置高度 */
+    font-size: 10px; /* 设置字体大小 */
+    text-align: center;
+    overflow: hidden;
+    /*line-height: 2.26em;*/
+    line-height: 2.17vh;
+}

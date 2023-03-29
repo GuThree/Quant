@@ -1,0 +1,127 @@
+=============================
+股票各板块指数代码
+　　1、沪市主板股票代码A股以600、601、603、605开头，B股代码以900开头;   #记得判断后缀，沪市；security改成stock
+　　2、深市主板股票代码：000开头;   #后缀是sz
+　　3、深市中小板股票代码：002开头;  #后缀是sz
+　　4、创业板股票代码：300开头;  #后缀是sz
+　　5、科创板股票代码：688开头;  #属于沪市，后缀是sh
+
+指数代码
+    1、沪市000开头(.sh)
+    2、深市399开头(.sz)
+    指数代码不一定以SZ、SH结尾，有SI、MI、CSI、CIC、CZC、SIB、SHF等
+
+=============================
+类对象：
+全局变量对象g         √
+策略信息总览Context   √
+总账户Portfolio      √
+持仓信息Position      √
+=============================
+交易函数：
+按股数下单           √
+按目标股数下单        √
+按价值下单           √
+按目标价值下单        √
+=============================
+策略设置函数：
+设置基准             √
+设置股票池子          √
+设置佣金             √
+设置印花税           √
+设置过户费           √
+设置滑点
+=============================
+策略获取函数：
+get_all_trade_days 获取所有交易日                                                                               顾√
+get_stock_basic 获取股票基础信息                                                                                 陈√
+history 获取股票历史数据，可查询多个标的单个数据字段，返回数据格式为 DataFrame 或 Dict(字典)                               蒋√
+attribute_history 获取股票历史数据，可查询单个标的多个数据字段，返回数据格式为 DataFrame 或 Dict(字典)                     蒋√
+namechange 股票曾用命                                                                                           蒋√
+hs_const 沪深股通成分股                                                                                          陈√
+stock_company 上市公司基本信息                                                                                   陈√
+new_share IPO新股列表                                                                                           陈√
+stk_limit 每日涨跌停价格                                                                                         陈√
+limit_list 每日涨跌停统计                                                                                        陈√
+hsgt_top10 沪深股通十大成交股                                                                                     陈√
+ggt_top10 港股通十大成交股                                                                                        陈√
+fund_basic 基金列表                                                                                             陈√
+fut_basic 期货合约信息表                                                                                         陈√
+opt_basic 期权合约信息                                                                                           陈√
+cb_basic 可转债基本信息                                                                                          陈√
+fx_obasic 外汇基础信息（海外）                                                                                    陈√
+hk_basic 港股列表                                                                                               陈√
+us_basic 美股列表                                                                                               陈√
+cn_cpi 居民消费价格指数                                                                                          陈√
+cn_gdp GDP数据                                                                                                 陈√
+
+get_billboard_list 获取龙虎榜数据                                                                                 顾√
+get_locked_shares 获取限售解禁数据                                                                                蒋√
+
+get_index_basic  获取指数基础信息                                                                                 顾√
+get_index_stocks 获取指数成份股                                                                                   蒋√
+get_index_weights 获取指数成分股权重                                                                               蒋√
+history_index 获取指数历史数据，可查询多个标的单个数据字段，返回数据格式为 DataFrame 或 Dict(字典)                          蒋
+attribute_history_index 获取指数历史数据，可查询单个标的多个数据字段，返回数据格式为 DataFrame 或 Dict(字典)                蒋
+daily_info 每日子指标
+
+get_concepts_class 获取概念股分类                                                                                 顾√
+get_stock_concept 查询某个股票的所属概念                                                                            蒋√
+get_concept_stocks 获取概念类的成份股                                                                              蒋√
+
+get_industries 获取申万行业列表                                                                                    陈√
+get_industry_stocks 获取申万行业成份股                                                                             陈√
+get_industry 查询股票所属行业                                                                                      陈√
+
+<-----特殊处理后期写------>
+income 利润表
+balancesheet 资产负债表
+cashflow 现金流量表
+forecast 业绩预告
+express 业绩快报
+fina_indicator 财务指标数据
+fina_mainbz 主营业务构成
+get_fundamentals 查询财务数据
+<---------------------->
+
+===============================
+数据处理函数：
+中性化  √
+去极值  √
+标准化  √
+===============================
+指标数据：
+Total Returns 策略收益                          √
+Total Annualized Returns 策略年化收益            √
+Alpha 阿尔法                                    √
+Beta 贝塔                                       √
+Sharpe 夏普比率                                  √
+Sortino 索提诺比率                               √
+Information Ratio 信息比率                       √
+Algorithm Volatility 策略波动率                  √
+Benchmark Volatility 基准波动率                  √
+Max Drawdown 最大回撤                            √
+Downside Risk 下行波动率                         √
+胜率                                            √
+日胜率                                          √
+盈亏比                                          √
+
+=============================================================================
+问题：有些证券在某些日期范围内获取行情信息时，没有记录，tushare返回空表，针对这种情况怎么处理
+
+开局默认空策略:
+
+# 导入函数库
+from quant import *
+
+def initialize(context):
+    # 输出内容到日志 Log.log()
+    Log.log("初始化函数开始运行且全局只运行一次\n")
+    # 设定沪深300作为基准
+    set_benckmark('399300.SZ')
+    # 设置滑点
+    set_PerSlippage(0)
+
+# 每日运行函数
+def handle_data(context):
+    pass
